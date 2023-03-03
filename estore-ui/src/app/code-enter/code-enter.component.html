@@ -1,0 +1,23 @@
+
+<div>
+<p>Enter New Discount Code:</p>
+<label for="new-code">Code: </label>
+<input id="new-code" #codeString />
+
+<label for="percent">Percentage Off: </label>
+<input type="number" id="percent" #codePercent />
+
+<button type="button" (click)="enter(codeString.value, codePercent.valueAsNumber); codeString.value=''; codePercent.value='';">
+  submit
+</button>
+</div>
+
+<div>
+<p>Active Codes:</p>
+<ul class="codes">
+    <li *ngFor="let code of codes">
+      <span>{{code.code}} for {{code.percent}}% off</span>
+      <button type="button" (click)="delete(code)">delete</button>
+    </li>
+  </ul>
+</div>

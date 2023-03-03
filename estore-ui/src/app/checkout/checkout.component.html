@@ -1,0 +1,13 @@
+<h2>Checkout:</h2>
+<ul class="items">
+    <h3>Price:  Item:   Quantity:</h3>
+    <li *ngFor="let item of items">
+        <span class="badge">{{item.price}}</span> {{item.name}}
+        <span class="badge">{{item.quantity}}</span>
+    </li>
+    <h3>Total Cost:</h3>
+    <span>{{total}}</span>
+    <app-code-checkout></app-code-checkout>
+  </ul>
+<button type="button" (click)="goBack()">go back</button>
+<button type="button">Proceed</button>

@@ -1,0 +1,12 @@
+<h2>Cart:</h2>
+<ul class="items">
+    <li *ngFor="let item of items">
+      <b routerLink="/user/detail/{{item.id}}">
+        <span class="badge">{{item.id}}</span> {{item.name}}
+      </b>
+        <button type="button" class="delete" title="delete item"
+        (click)="delete(item)">x</button>
+    </li>
+  </ul>
+<button type="button" (click)="goBack()">go back</button>
+<button type="button" (click)="checkout()">checkout</button>

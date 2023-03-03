@@ -1,0 +1,16 @@
+
+<nav>
+  <a routerLink="/user/items">Item List</a>
+  <!--TODO CHANGE THIS-->
+  <a routerLink="/user/cart">Cart</a>
+</nav>
+
+<app-item-search></app-item-search>
+
+<h2>Items</h2>
+<div class="items-menu">
+  <a *ngFor="let item of items"
+      routerLink="/user/detail/{{item.id}}">
+      {{item.name}}
+  </a>
+</div>

@@ -1,0 +1,9 @@
+<div *ngIf="item">
+    <h2>{{item.name | uppercase}} Details</h2>
+    <div><span>id: </span>{{item.id}}</div>
+    <div><span>price: </span>{{item.price}}</div>
+    <div><span>quantity: </span>{{item.quantity}}</div>
+
+    <button type="button" (click)="goBack()">go back</button>
+    <button type="button" (click)="addCart()">add to cart</button>
+</div>
