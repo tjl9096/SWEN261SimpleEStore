@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CodeFileDao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">estore-api</a> &gt; <a href="index.source.html" class="el_package">com.estore.api.estoreapi.persistence</a> &gt; <span class="el_source">CodeFileDao.java</span></div><h1>CodeFileDao.java</h1><pre class="source lang-java linenums">package com.estore.api.estoreapi.persistence;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.estore.api.estoreapi.model.Code;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Component
+public class CodeFileDao implements CodeDao {
+
+    private ObjectMapper objectMapper; //clown to clown communication, clown to clown conversation
+    private String filename;    // read or write to
+
+    Map&lt;String, Code&gt; codes; //local cache of all items
+
+    //constructor
+<span class="fc" id="L24">    public CodeFileDao(@Value(&quot;${codes.file}&quot;) String filename, ObjectMapper objectMapper) throws IOException {</span>
+<span class="fc" id="L25">        this.filename = filename;</span>
+<span class="fc" id="L26">        this.objectMapper = objectMapper;</span>
+<span class="fc" id="L27">        load();</span>
+<span class="fc" id="L28">    }</span>
+
+    private Code[] getCodeArray() {
+<span class="fc" id="L31">        return getCodeArray(null);</span>
+    }
+
+    //get all the codes, potentially search for specific one?
+    //then check returned array for length and if = 1 code exists already
+    private Code[] getCodeArray(String str) { //if str = null, return all items
+<span class="fc" id="L37">        ArrayList&lt;Code&gt; codeList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (Code c : codes.values()) {</span>
+<span class="pc bpc" id="L40" title="3 of 4 branches missed.">            if (str == null || c.getCode().contains(str)) {</span>
+<span class="fc" id="L41">                codeList.add(c);</span>
+            }
+<span class="fc" id="L43">        }</span>
+
+<span class="fc" id="L45">        Code[] codeArray = new Code[codeList.size()];</span>
+<span class="fc" id="L46">        codeList.toArray(codeArray);</span>
+<span class="fc" id="L47">        return codeArray;</span>
+    }
+
+    //put everything into a file
+    private boolean save() throws IOException {
+<span class="fc" id="L52">        Code[] codeArray = getCodeArray(null);</span>
+
+        //item array -&gt; file
+<span class="fc" id="L55">        objectMapper.writeValue(new File(filename), codeArray);</span>
+<span class="fc" id="L56">        return true;</span>
+    }
+
+    //map codes from file :)
+    private boolean load() throws IOException {
+<span class="fc" id="L61">        codes = new TreeMap&lt;&gt;();</span>
+
+<span class="fc" id="L63">        Code[] codeArray = objectMapper.readValue(new File(filename),Code[].class); //???? just kinda copied stuff</span>
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (Code c : codeArray) {</span>
+<span class="fc" id="L66">            codes.put(c.getCode(), c);</span>
+            //don't need the id part bc no ids
+        }
+
+<span class="fc" id="L70">        return true;</span>
+    }
+
+    //the one public method, i swear there'll be more smile
+    //creates new code
+    //TODO: check if code exists already before making it
+    //that's a problem for future sam
+    @Override
+    public Code createCode(Code code) throws IOException {
+<span class="fc" id="L79">        synchronized(codes) {</span>
+<span class="fc" id="L80">            Code newCode = new Code(code.getCode(), code.getPercent());</span>
+<span class="fc" id="L81">            codes.put(newCode.getCode(), newCode);</span>
+<span class="fc" id="L82">            save(); //very important :blessed_kirby:</span>
+<span class="fc" id="L83">            return newCode; //the other ones return what was created so why not this one</span>
+        }
+    }
+
+    @Override
+    public Code[] getCodes() throws IOException {
+<span class="fc" id="L89">        synchronized(codes) {</span>
+<span class="fc" id="L90">            return getCodeArray();</span>
+        }
+    }
+
+    @Override
+    public boolean deleteCode(String code) throws IOException {
+<span class="fc" id="L96">        synchronized(codes) {</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">            if (codes.containsKey(code)) {</span>
+<span class="fc" id="L98">                codes.remove(code);</span>
+<span class="fc" id="L99">                return save();</span>
+            } else {
+<span class="fc" id="L101">                return false;</span>
+            }
+        }
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,10 @@
+com\estore\api\estoreapi\controller\ShopControllerTest.class
+com\estore\api\estoreapi\model\CodeTest.class
+com\estore\api\estoreapi\persistence\ShopFileDAOTest.class
+com\estore\api\estoreapi\model\CartTest.class
+com\estore\api\estoreapi\persistence\ItemFileDAOTest.class
+com\estore\api\estoreapi\controller\CodeControllerTest.class
+com\estore\api\estoreapi\EstoreApiApplicationTests.class
+com\estore\api\estoreapi\controller\ItemControllerTest.class
+com\estore\api\estoreapi\model\ItemTest.class
+com\estore\api\estoreapi\persistence\CodeFileDaoTest.class

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShopFileDAO.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">estore-api</a> &gt; <a href="index.source.html" class="el_package">com.estore.api.estoreapi.persistence</a> &gt; <span class="el_source">ShopFileDAO.java</span></div><h1>ShopFileDAO.java</h1><pre class="source lang-java linenums">package com.estore.api.estoreapi.persistence;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import com.estore.api.estoreapi.model.Cart;
+import com.estore.api.estoreapi.model.Item;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+
+@Component
+public class ShopFileDAO implements ShopDAO{
+
+    Map&lt;Integer,Item&gt; items;
+    List&lt;Cart&gt; carts;
+    private ObjectMapper objectMapper;
+    private String user;
+    private String filename;
+
+<span class="fc" id="L26">    public ShopFileDAO(@Value(&quot;${cart.file}&quot;) String filename, ObjectMapper objectMapper) throws IOException {</span>
+<span class="fc" id="L27">        this.user = &quot;&quot;;</span>
+<span class="fc" id="L28">        this.filename = filename;</span>
+<span class="fc" id="L29">        this.objectMapper = objectMapper;</span>
+<span class="fc" id="L30">        load();</span>
+<span class="fc" id="L31">    }</span>
+    
+    @Override
+    public Item[] getItems() {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        if(this.user.equals(&quot;&quot;)) return null;</span>
+<span class="fc" id="L36">        synchronized(items) {</span>
+<span class="fc" id="L37">            return getItemArray();</span>
+        }
+    }
+
+    @Override
+    public Double getTotal() {
+<span class="fc" id="L43">        Item[] items = this.getItemArray();</span>
+<span class="fc" id="L44">        Double val = 0.0;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for(int i = 0; i &lt; items.length; i++) {</span>
+<span class="fc" id="L46">            val = val + (items[i].getPrice() * items[i].getQuantity());</span>
+        }
+<span class="fc" id="L48">        return val;</span>
+    }
+
+    @Override
+    public Item addItem(Item item) throws IOException {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if(this.user.equals(&quot;&quot;)) return null;</span>
+
+<span class="fc" id="L55">        int max = item.getQuantity();</span>
+<span class="fc" id="L56">        synchronized(items) {</span>
+<span class="fc" id="L57">            boolean found = false;</span>
+<span class="fc" id="L58">            int key = -1;</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">            for(int i : items.keySet()) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">                if(i == item.getId()) {</span>
+<span class="fc" id="L61">                    found = true;</span>
+<span class="fc" id="L62">                    key = i;</span>
+<span class="fc" id="L63">                    break;</span>
+                }
+<span class="fc" id="L65">            }</span>
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if(found) {</span>
+<span class="fc" id="L68">                item.setQuantity(items.get(key).getQuantity() + 1);</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                if(item.getQuantity() &gt; max) {</span>
+<span class="fc" id="L70">                    item.setQuantity(max);</span>
+                }
+            }
+            else {
+<span class="fc" id="L74">                item.setQuantity(1);</span>
+            }
+<span class="fc" id="L76">}           </span>
+<span class="fc" id="L77">            items.put(item.getId(), item);</span>
+<span class="fc" id="L78">            save();</span>
+<span class="fc" id="L79">            return item;</span>
+    }
+
+    @Override
+    public String changeUser(String user) throws IOException {
+<span class="fc" id="L84">        this.user = user;</span>
+<span class="fc" id="L85">        load();</span>
+<span class="fc" id="L86">        return user;</span>
+    }
+
+    @Override
+    public boolean clear() throws IOException {
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        if(this.user.equals(&quot;&quot;)) return false;</span>
+<span class="fc" id="L92">        items = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L93">        save();</span>
+<span class="fc" id="L94">        return true;</span>
+    }
+
+    @Override
+    public boolean removeItem(Item item) throws IOException {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if(this.user.equals(&quot;&quot;)) return false;</span>
+<span class="fc" id="L100">        synchronized(items) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">            if (items.containsKey(item.getId())) {</span>
+<span class="fc" id="L102">                items.remove(item.getId());</span>
+<span class="fc" id="L103">                save();</span>
+<span class="fc" id="L104">                return true;</span>
+            }
+<span class="fc" id="L106">            return false;</span>
+        }
+    }
+
+    private boolean save() throws IOException {
+<span class="fc" id="L111">        Item[] itemArray = getItemArray();</span>
+<span class="fc" id="L112">        Cart[] cartArray = getCartArray();</span>
+        
+<span class="fc" id="L114">        boolean found = false;</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        for(Cart i : cartArray){</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if(i.getUser().equals(this.user)){</span>
+<span class="fc" id="L117">                i.setItems(itemArray);</span>
+<span class="fc" id="L118">                found = true;</span>
+<span class="fc" id="L119">                break;</span>
+            }
+        }
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if(!found) return false;</span>
+
+        //item array -&gt; file
+<span class="fc" id="L125">        objectMapper.writeValue(new File(filename), cartArray);</span>
+<span class="fc" id="L126">        return true;</span>
+    }
+
+    private boolean load() throws IOException {
+<span class="fc" id="L130">        items = new TreeMap&lt;&gt;();</span>
+<span class="fc" id="L131">        carts = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L133">        Cart[] cartArray = objectMapper.readValue(new File(filename),Cart[].class);</span>
+<span class="fc" id="L134">        Item[] itemArray = new Item[0];</span>
+<span class="fc" id="L135">        boolean found = false;</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for(Cart i : cartArray){</span>
+<span class="pc bpc" id="L137" title="1 of 4 branches missed.">            if(!found &amp;&amp; i.getUser().equals(this.user)){</span>
+<span class="fc" id="L138">                itemArray = i.getItems();</span>
+<span class="fc" id="L139">                found = true;</span>
+            }
+<span class="fc" id="L141">            carts.add(i);</span>
+        }
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if(!found){</span>
+<span class="fc" id="L144">            carts.add(new Cart(this.user, new Item[0]));</span>
+        }
+
+<span class="fc bfc" id="L147" title="All 2 branches covered.">        for(Item i : itemArray) {</span>
+<span class="fc" id="L148">            items.put(i.getId(), i);</span>
+        }
+<span class="fc" id="L150">        return true;</span>
+    }
+
+    private Item[] getItemArray() {
+<span class="fc" id="L154">        ArrayList&lt;Item&gt; itemList = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L156" title="All 2 branches covered.">        for (Item i : items.values()) {</span>
+<span class="fc" id="L157">            itemList.add(i);</span>
+<span class="fc" id="L158">        }</span>
+
+<span class="fc" id="L160">        Item[] itemArray = new Item[itemList.size()];</span>
+<span class="fc" id="L161">        itemList.toArray(itemArray);</span>
+<span class="fc" id="L162">        return itemArray;</span>
+    }
+
+    private Cart[] getCartArray() {
+<span class="fc" id="L166">        Cart[] cartArray = new Cart[this.carts.size()];</span>
+<span class="fc" id="L167">        this.carts.toArray(cartArray);</span>
+<span class="fc" id="L168">        return cartArray;</span>
+    }
+
+    @Override
+    public Item getItem(int id) {
+<span class="fc" id="L173">        synchronized(items) {</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">            if (items.containsKey(id))</span>
+<span class="fc" id="L175">                return items.get(id);</span>
+            else
+<span class="fc" id="L177">                return null;</span>
+        }
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

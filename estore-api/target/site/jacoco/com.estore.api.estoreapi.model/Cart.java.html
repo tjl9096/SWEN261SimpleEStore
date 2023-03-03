@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Cart.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">estore-api</a> &gt; <a href="index.source.html" class="el_package">com.estore.api.estoreapi.model</a> &gt; <span class="el_source">Cart.java</span></div><h1>Cart.java</h1><pre class="source lang-java linenums">package com.estore.api.estoreapi.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Cart {
+    
+    static final String STRING_FORMAT = &quot;Cart [user=%s, items=%s]&quot;;
+
+    @JsonProperty(&quot;user&quot;) private String user;
+    @JsonProperty(&quot;items&quot;) private Item[] items;
+
+<span class="fc" id="L12">    public Cart(@JsonProperty(&quot;user&quot;) String user, @JsonProperty(&quot;items&quot;) Item[] items) {</span>
+<span class="fc" id="L13">        this.user = user;</span>
+<span class="fc" id="L14">        this.items = items;</span>
+<span class="fc" id="L15">    }</span>
+
+    public String getUser(){
+<span class="fc" id="L18">        return this.user;</span>
+    }
+
+    public Item[] getItems(){
+<span class="fc" id="L22">        return this.items;</span>
+    }
+
+    public void setUser(String user){
+<span class="fc" id="L26">        this.user = user;</span>
+<span class="fc" id="L27">    }</span>
+
+    public void setItems(Item[] items){
+<span class="fc" id="L30">        this.items = items;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L35">        return String.format(STRING_FORMAT, user, items.toString());</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

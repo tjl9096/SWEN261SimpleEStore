@@ -1,0 +1,12 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+estore-api,com.estore.api.estoreapi.persistence,ShopFileDAO,4,421,5,35,0,88,5,27,0,12
+estore-api,com.estore.api.estoreapi.persistence,CodeFileDao,5,166,3,7,0,34,2,11,0,8
+estore-api,com.estore.api.estoreapi.persistence,ItemFileDAO,0,262,0,16,0,52,0,20,0,12
+estore-api,com.estore.api.estoreapi,WebConfig,0,35,0,0,0,4,0,2,0,2
+estore-api,com.estore.api.estoreapi,EstoreApiApplication,5,3,0,0,2,1,1,1,1,1
+estore-api,com.estore.api.estoreapi.model,Code,0,23,0,0,0,8,0,5,0,5
+estore-api,com.estore.api.estoreapi.model,Cart,0,39,0,0,0,11,0,6,0,6
+estore-api,com.estore.api.estoreapi.model,Item,0,71,0,0,0,15,0,10,0,10
+estore-api,com.estore.api.estoreapi.controller,CodeController,0,83,0,4,0,22,0,7,0,5
+estore-api,com.estore.api.estoreapi.controller,ShopController,0,161,0,8,0,41,0,12,0,8
+estore-api,com.estore.api.estoreapi.controller,ItemController,0,164,0,8,0,41,0,12,0,8
